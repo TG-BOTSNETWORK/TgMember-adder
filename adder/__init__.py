@@ -2,7 +2,7 @@
 #Telegram: @my_name_is_nobitha
 
 from pyrogram import Client as adder
-from .config import Config
+from config.config import Config
 
 addboy = adder(
        "adder_boy",
