@@ -13,9 +13,38 @@ start_keyboard = InlineKeyboardMarkup([[
       InlineKeyboardButton("🛡️ Help Section 🛡️", callback_data="help")
 ]])
 
+help_keyboard = InlineKeyboardMarkup([[
+     InlineKeyboardButton("🪪 Login", callback_data="login_txt"),
+     InlineKeyboardButton("Adder 🎁", callback_data="adder_txt"),
+],[
+     InlineKeyboardButton("🔙 Back", callback_data="start_cq")
+
+]])
+
 @addboy.on_message(filters.command("start") & filters.private)
 async def start(addboy, message):
     await message.reply_text(
-        text="Hello {}\n\nIam a member adder bot i can add members in your group simply and smoothly for more information click below **Help Section** button or /help command to see information.".format(message.from_user.mention()),
+        text="Hello {}\n\nMy name is **{}** Iam a member adder bot i can add members in your group simply and smoothly for more information click below **Help Section** button or /help command to see information.".format(message.from_user.mention(), Config.BOT_NAME),
         reply_markup=start_keyboard,
+    )
+
+@addboy.on_callback_query(filters.regex("start_cq"))
+async def start(addboy, CallbackQuery):
+    await CallbackQuery.edit_message_text(
+        text="Hello {}\n\nMy name is **{}** Iam a member adder bot i can add members in your group simply and smoothly for more information click below **Help Section** button or /help command to see information.".format(CallbackQuery.from_user.mention(), Config.BOT_NAME),
+        reply_markup=start_keyboard,
+    )
+
+@addboy.on_message(filters.command("help"))
+async def help(addboy, message):
+    await message.reply_text(
+        text="Welcome to help section iam a group member adder bot see more commands from below.",
+        reply_markup=help_keyboard,
+    )
+
+@addboy.on_callback_query(filters.regex("help"))
+async def help(addboy, CallbackQuery):
+    await CallbackQuery.edit_message_text(
+        text="Welcome to help section iam a group member adder bot see more commands from below.",
+        reply_markup=help_keyboard,
     )

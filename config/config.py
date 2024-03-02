@@ -11,6 +11,6 @@ class Config:
     API_ID = int(getenv("API_ID", "22363963"))
     API_HASH = getenv("API_HASH", "5c096f7e8fd4c38c035d53dc5a85d768")
     BOT_TOKEN = getenv("BOT_TOKEN", "6885430381:AAHjzM8P6Zk2eCyLQlv4mF5qbsaBRYhnV4U")
-    BOT_NAME = getenv("BOT_NAME", "")
+    BOT_NAME = getenv("BOT_NAME", "Tg Member Adder")
     BOT_USERNAME = getenv("BOT_USERNAME", "")
     DB_MAN = getenv("DB_MAN", "")

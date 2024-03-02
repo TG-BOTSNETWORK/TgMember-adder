@@ -3,3 +3,4 @@ TgCrypto
 pymongo[srv]
 asyncio
 aiohttp
+pyromod
