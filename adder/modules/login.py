@@ -54,7 +54,7 @@ async def get_user_input(chat_id, timeout):
     except asyncio.TimeoutError:
         raise asyncio.TimeoutError("No input received.")
 
-@addboy.on_message(filters.private & ~filters.me)
+@addboy.on_message(filters.private)
 async def handle_user_input(_, message):
     chat_id = message.chat.id
     if chat_id in login_sessions:
