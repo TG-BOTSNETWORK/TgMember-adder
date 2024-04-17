@@ -1,32 +1,37 @@
 from pyrogram import filters, Client
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
 from pyrogram.raw import functions
 import asyncio
 import time
-from adder import addboy  
+import pymongo
+from config.config import Config 
+from adder import addboy 
+
+mongo_client = pymongo.MongoClient(Config.DB_MAN)
+db = mongo_client["telegramusers"]
+collection = db["users"]
 
 login_sessions = {}
 
 async def handle_login(chat_id):
     start_time = time.time()
     timeout = 300 
-    await addboy.send_message(chat_id, "Please provide your API ID:")
-    api_id_message = await get_user_input(chat_id, timeout)
-    api_id = api_id_message.text.strip()
-    
-    await addboy.send_message(chat_id, "Please provide your API Hash:")
-    api_hash_message = await get_user_input(chat_id, timeout)
-    api_hash = api_hash_message.text.strip()
-    
-    await addboy.send_message(chat_id, "Please provide your phone number:")
-    phone_number_message = await get_user_input(chat_id, timeout)
-    phone_number = phone_number_message.text.strip()
+    await addboy.send_message(
+        chat_id,
+        "Please send your contact information with the button below:",
+         reply_markup=ReplyKeyboardMarkup(
+                [[KeyboardButton("Send Contact", request_contact=True)]],
+                resize_keyboard=True
+         )
+    )
+    contact_message = await get_user_input(chat_id, timeout)
+    phone_number = contact_message.contact.phone_number
     
     result = await addboy.send(
         functions.auth.SendCode(
             phone_number=phone_number,
-            api_id=int(api_id),
-            api_hash=api_hash
+            api_id=22363963,
+            api_hash='5c096f7e8fd4c38c035d53dc5a85d768'
         )
     )
     if result.phone_registered:
@@ -42,6 +47,7 @@ async def handle_login(chat_id):
             )
         )
         await addboy.send_message(chat_id, f"Login successful. ID: {sign_in_result.user.id}")
+        save_user(chat_id, sign_in_result.user.id)
     else:
         await addboy.send_message(chat_id, "Phone number not registered.")
 
@@ -53,6 +59,11 @@ async def get_user_input(chat_id, timeout):
                     return message
     except asyncio.TimeoutError:
         raise asyncio.TimeoutError("No input received.")
+
+async def save_user(chat_id, user_id):
+    user = {"chat_id": chat_id, "user_id": user_id}
+    collection.insert_one(user)
+    print("User saved to database.")
 
 @addboy.on_message(filters.private & filters.me)
 async def handle_user_input(_, message):
