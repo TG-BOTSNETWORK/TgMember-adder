@@ -4,3 +4,4 @@ pymongo[srv]
 asyncio
 aiohttp
 pyromod
+python-dotenv
