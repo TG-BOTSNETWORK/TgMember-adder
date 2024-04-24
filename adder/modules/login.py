@@ -49,8 +49,15 @@ async def handle_login(app: Client, chat_id):
                 otp_message = await app.listen(chat_id)
                 otp = otp_message.text.strip()
                 sign_in_result = await client.sign_in(phone_number, result.phone_code_hash, otp)
-                await app.send_message(chat_id, f"Login successful. ID: {sign_in_result.user.id}")
-                await save_user(chat_id, sign_in_result.user.id)
+                
+                # Fetch more information about the logged-in user
+                me = await app.get_me()
+                user_info = f"Username: {me.username}\nPhone number: {me.phone_number}\nLast login: {me.status.date}"
+                await app.send_message(chat_id, f"Login successful.\n{user_info}")
+                
+                # Save user to database
+                await save_user(chat_id, me.id)
+                
             except PhoneCodeExpired:
                 await app.send_message(chat_id, "The OTP code has expired. Please try again.")
             except PhoneCodeInvalid:
@@ -60,16 +67,17 @@ async def handle_login(app: Client, chat_id):
                 password_message = await app.listen(chat_id)
                 password = password_message.text.strip()
                 try:
-                    sign_in_result = await client.sign_in(phone_number, result.phone_code_hash, password)
-                    await app.send_message(chat_id, f"Login successful. ID: {sign_in_result.user.id}")
-                    await save_user(chat_id, sign_in_result.user.id)
+                    sign_in_result = await client.check_password(password)
+                    me = await app.get_me()
+                    user_info = f"Username: {me.username}\nPhone number: {me.phone_number}\nLast login: {me.status.date}"
+                    await app.send_message(chat_id, f"Login successful.\n{user_info}")
+                    await save_user(chat_id, me.id)
                 except PasswordHashInvalid:
                     await app.send_message(chat_id, "The password you entered is incorrect. Please try again.")
         else:
             await app.send_message(chat_id, "Invalid phone number format or no message received.")
     except Exception as e:
         print(f"Error handling login: {e}")
-
 
 async def save_user(chat_id, user_id):
     user = {"chat_id": chat_id, "user_id": user_id}
