@@ -13,4 +13,4 @@ class Config:
     BOT_TOKEN = getenv("BOT_TOKEN", "6885430381:AAHjzM8P6Zk2eCyLQlv4mF5qbsaBRYhnV4U")
     BOT_NAME = getenv("BOT_NAME", "Tg Member Adder")
     BOT_USERNAME = getenv("BOT_USERNAME", "")
-    DB_MAN = getenv("DB_MAN", "mongodb+srv://santhoshpodili874:SANTHU7981@cluster0.rz2dqev.mongodb.net/Cluster0?retryWrites=true&w=majority")
+    DB_MAN = getenv("DB_MAN", "mongodb+srv://Amala203145:Amala2031456@cluster0.t9ibfge.mongodb.net/?retryWrites=true&w=majority")

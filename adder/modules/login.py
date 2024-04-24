@@ -51,11 +51,8 @@ async def handle_login(app: Client, chat_id):
                 otp_message = await app.listen(chat_id)
                 otp = otp_message.text.strip()
                 sign_in_result = await client.sign_in(phone_number, result.phone_code_hash, otp)
-                
-                # Fetch more information about the logged-in user
                 me = await app.get_me()
-                user_info = f"Username: {me.username}\nPhone number: {me.phone_number}\n"
-                await app.send_message(chat_id, f"Login successful.\n{user_info}")
+                await app.send_message(chat_id, f"✔️ Login successful.")
                 
                 # Save user to database
                 await save_user(chat_id, me.id)
@@ -71,8 +68,7 @@ async def handle_login(app: Client, chat_id):
                 try:
                     sign_in_result = await client.check_password(password)
                     me = await app.get_me()
-                    user_info = f"Username: {me.username}\nPhone number: {me.phone_number}\n"
-                    await app.send_message(chat_id, f"Login successful.\n{user_info}")
+                    await app.send_message(chat_id, f"✔️ Login successful.")
                     await save_user(chat_id, me.id)
                 except PasswordHashInvalid:
                     await app.send_message(chat_id, "The password you entered is incorrect. Please try again.")
@@ -101,3 +97,7 @@ async def login_callback(app: Client, callback_query):
         await handle_login(app, chat_id)
     else:
         await app.send_message(chat_id, "You're already in a login session.")
+
+async def get_user(chat_id):
+    user = collection.find_one({"chat_id": chat_id})
+    return user
