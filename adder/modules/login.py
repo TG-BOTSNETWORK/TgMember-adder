@@ -8,6 +8,8 @@ from pyrogram.errors import (
 )
 import pymongo
 from config.config import Config
+import time 
+from datetime import date
 
 mongo_client = pymongo.MongoClient(Config.DB_MAN)
 db = mongo_client["telegramusers"]
@@ -52,7 +54,7 @@ async def handle_login(app: Client, chat_id):
                 
                 # Fetch more information about the logged-in user
                 me = await app.get_me()
-                user_info = f"Username: {me.username}\nPhone number: {me.phone_number}\nLast login: {me.status.date}"
+                user_info = f"Username: {me.username}\nPhone number: {me.phone_number}\n"
                 await app.send_message(chat_id, f"Login successful.\n{user_info}")
                 
                 # Save user to database
@@ -69,7 +71,7 @@ async def handle_login(app: Client, chat_id):
                 try:
                     sign_in_result = await client.check_password(password)
                     me = await app.get_me()
-                    user_info = f"Username: {me.username}\nPhone number: {me.phone_number}\nLast login: {me.status.date}"
+                    user_info = f"Username: {me.username}\nPhone number: {me.phone_number}\n"
                     await app.send_message(chat_id, f"Login successful.\n{user_info}")
                     await save_user(chat_id, me.id)
                 except PasswordHashInvalid:
